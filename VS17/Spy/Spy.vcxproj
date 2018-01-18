@@ -27,8 +27,11 @@
     <ClInclude Include="..\..\src\Debugger.hpp" />
     <ClInclude Include="..\..\src\Guard.hpp" />
     <ClInclude Include="..\..\src\Hash.hpp" />
-    <ClInclude Include="..\..\src\Spy.hpp" />
+    <ClInclude Include="..\..\src\Espionage.hpp" />
     <ClInclude Include="..\..\src\Queue.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
