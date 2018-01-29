@@ -1,4 +1,6 @@
-#define GUARD_LVL 2
+//#define GUARD_LVL 3
+
+#include <thread> // std::thread
 
 #include "Espionage.hpp"
 
@@ -6,14 +8,18 @@ using namespace NQueue;
 
 int main(int argc, char *argv[])
 {
-	Queue<int, 4> q;
-	q.push(4);
-	q.push(5);
-	q.push(6);
-	q.pop();
-	q.push(7);
-	q.push(8);
-	q.dump();
+	std::ios_base::sync_with_stdio(false);
+
+	WAVE wave;
+	std::thread intelAgency(&IntelAgency::listen, std::ref(wave));
+	std::thread spy(&Spy::generateInfo, std::ref(wave), FREQ);
+	
+
+	//for (int i = 0; i < 10; ++i) std::cout << i << std::endl;
+
+	spy.join();
+	intelAgency.join();
+	wave.dump();
 
 	system("pause");
 	return 0;

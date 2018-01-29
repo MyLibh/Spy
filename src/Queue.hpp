@@ -59,10 +59,10 @@ private:
 	CANARY_GUARD(std::string canaryStart_;)
 	HASH_GUARD(std::string hash_;)
 
-	std::atomic<size_t>  first_,
-			             second_;
+	std::atomic_size_t  first_,
+			            second_;
 
-	std::array<T, SIZE>  buffer_;
+	std::array<T, SIZE> buffer_;
 
 	CANARY_GUARD(std::string canaryFinish_;)
 
@@ -101,8 +101,8 @@ inline Queue<T, SIZE>::Queue() noexcept :
 	CANARY_GUARD(canaryStart_(CANARY_VALUE), )
 	HASH_GUARD(hash_(), )
 
-	first_(),
-	second_(),
+	first_(NULL),
+	second_(NULL),
 	buffer_()
 
 	CANARY_GUARD(, canaryFinish_(CANARY_VALUE))
@@ -119,10 +119,10 @@ template<typename T, size_t SIZE>
 inline Queue<T, SIZE>::Queue(const Queue &crQueue) noexcept :
 	CANARY_GUARD(CANARY_VALUE(NHash::Hash("Queue" + ++numberOfInstances).getHash()), )
 	CANARY_GUARD(canaryStart_(CANARY_VALUE), )
-	HASH_GUARD(hash_(crStorage.hash_), )
+	HASH_GUARD(hash_(crQueue.hash_), )
 
-	first_(crQueue.first_),
-	second_(crQueue.second_),
+	first_(crQueue.first_.load()),
+	second_(crQueue.second_.load()),
 	buffer_(crQueue.buffer_)
 
 	CANARY_GUARD(, canaryFinish_(CANARY_VALUE))
@@ -136,23 +136,26 @@ GUARD_CHECK()
 
 template<typename T, size_t SIZE>
 inline Queue<T, SIZE>::Queue(Queue &&rrQueue) noexcept :
-	CANARY_GUARD(CANARY_VALUE(NHash::Hash("Storage" + ++numberOfInstances).getHash()), )
+	CANARY_GUARD(CANARY_VALUE(NHash::Hash("Queue" + ++numberOfInstances).getHash()), )
 	CANARY_GUARD(canaryStart_(CANARY_VALUE), )
-	HASH_GUARD(hash_(std::move(rrStorage.hash_)), )
+	HASH_GUARD(hash_(std::move(rrQueue.hash_)), )
 
-	first_(std::move(rrQueue.first_)),
-	second_(std::move(rrQueue.second_)),
+	first_(),
+	second_(),
 	buffer_(std::move(rrQueue.buffer_))
 
 	CANARY_GUARD(, canaryFinish_(CANARY_VALUE))
 {
 CANARY_GUARD(numberOfInstances--;)
-
+	
 	numberOfInstances++;
 
-	rrStorage.buf_.fill(NULL);
+	first_.exchange(rrQueue.first_);
+	second_.exchange(rrQueue.second_);
 
-HASH_GUARD(rrStorage.hash_.clear();)
+	rrQueue.buffer_.fill(NULL);
+
+HASH_GUARD(rrQueue.hash_.clear();)
 
 GUARD_CHECK()
 }
@@ -202,7 +205,7 @@ HASH_GUARD(rrQueue.hash_.clear();)
 	rrQueue.first_  = NULL;
 	rrQueue.second_ = NULL;
 	rrQueue.buffer_.fill(NULL);
-
+	
 GUARD_CHECK()
 
 	return (*this);

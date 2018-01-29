@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\src\Debugger.cpp">
       <Filter>Source Files\Special</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Espionage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Queue.hpp">
