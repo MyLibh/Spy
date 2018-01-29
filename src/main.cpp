@@ -15,9 +15,7 @@ int main(int argc, char *argv[])
 	std::thread spy(&Spy::generateInfo, std::ref(wave), FREQ);
 	
 
-	//for (int i = 0; i < 10; ++i) std::cout << i << std::endl;
-
-	spy.join();
+	spy.detach();
 	intelAgency.join();
 	wave.dump();
 

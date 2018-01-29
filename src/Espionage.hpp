@@ -9,6 +9,8 @@
 #include <boost\bimap\multiset_of.hpp> // boost::bimaps::multiset_of
 #include <boost\bimap\list_of.hpp>     // boost::bimaps::list_of
 
+#include <experimental\filesystem> // std::filesystem
+
 #include "Queue.hpp"
 
 typedef boost::bimaps::bimap<char, std::string>  morse_t;
@@ -105,6 +107,8 @@ class Spy
 {
 public:
 	static void generateInfo(RWAVE, size_t = FREQ);
+	static void sendInfo(RWAVE);
+	static void sendFrom(RWAVE, const std::experimental::filesystem::path&);
 };
 
 inline std::string char2morse(char);
